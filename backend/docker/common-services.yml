@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  postgres_db:
+    build:
+      context: ./database
+    container_name: postgresql
+    env_file: ./database/.env
+    restart: always
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql
+    env_file: ./database/.env
+    restart: always
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "mysqladmin ping -h localhost"
+      interval: 10s
+      timeout: 20s
+      retries: 5
+
+  migration:
+    build:
+      context: ./migration
+    container_name: db-migration
+    working_dir: /usr/app
+    entrypoint: ./migrate
+    env_file: ./migration/.env
+    volumes:
+      - ../database/migration:/usr/app
+      - ../database/migration/init/:/docker-entrypoint-initdb.d/
+
+  tarantool-db:
+    image: tarantool/tarantool:2.8
+    container_name: tarantool-db
+    command: tarantool /cache/init.lua
+    env_file:
+      - ./cache/.env
+    volumes:
+      - ./cache:/cache
+
+  cube:
+    env_file: ./cube/.env
+    expose:
+      - 10001
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://cube:10001/healthcheck"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 6
+      start_period: 10s

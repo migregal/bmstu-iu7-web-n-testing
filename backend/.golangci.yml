@@ -1,0 +1,5 @@
+run:
+  go: '1.19'
+  build-tags:
+    - unit
+    - smoke
