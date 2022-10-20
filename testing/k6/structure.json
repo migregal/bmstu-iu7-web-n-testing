@@ -1,0 +1,56 @@
+{
+    "id": "08197c47-ce17-4048-80b3-8170e9369f90",
+    "name": "structure name",
+    "layers": [
+        {
+            "id": 1,
+            "limit_func": "sum",
+            "activation_func": "prod"
+        },
+        {
+            "id": 2,
+            "limit_func": "sum",
+            "activation_func": "prod"
+        }
+    ],
+    "neurons": [
+        {
+            "id": 1,
+            "layer_id": 1
+        },
+        {
+            "id": 2,
+            "layer_id": 1
+        },
+        {
+            "id": 3,
+            "layer_id": 2
+        },
+        {
+            "id": 4,
+            "layer_id": 2
+        }
+    ],
+    "links": [
+        {
+            "id": 1,
+            "from": 1,
+            "to": 3
+        },
+        {
+            "id": 2,
+            "from": 1,
+            "to": 4
+        },
+        {
+            "id": 3,
+            "from": 2,
+            "to": 3
+        },
+        {
+            "id": 4,
+            "from": 2,
+            "to": 4
+        }
+    ]
+}

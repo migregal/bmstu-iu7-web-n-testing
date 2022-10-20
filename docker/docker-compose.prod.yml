@@ -1,0 +1,162 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: macbre/nginx-http3:1.23.1
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../frontend/public/:/usr/share/nginx/html/
+      - ../nginx/out/crypto/:/etc/neural_storage.com/
+    networks:
+      - api-gateaway
+      - stat-gateaway
+      - backend
+      - database_admin
+    ports:
+      - 443:443/tcp
+      - 443:443/udp
+      - 80:80/tcp
+      - 80:80/udp
+    depends_on:
+      - cube
+      - grafana
+      - pgadmin4
+    restart: always
+
+  postgres_db:
+    extends:
+      file: ../backend/docker/common-services.yml
+      service: postgres_db
+    env_file: ../backend/docker/database/.env
+    networks:
+      - database
+    # volumes:
+    #   - ../backend/database/data/postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migration:
+    extends:
+      file: ../backend/docker/common-services.yml
+      service: migration
+    env_file: ../backend/docker/database/.env
+    networks:
+      - database
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    restart: on-failure:3
+
+  tarantool-db:
+    extends:
+      file: ../backend/docker/common-services.yml
+      service: tarantool-db
+    env_file:
+      - ../backend/docker/cache/.env
+    networks:
+      - cache
+
+  prometheus:
+    extends:
+      file: common-services.yml
+      service: prometheus
+    networks:
+      - backend
+      - metrics
+    expose:
+      - 9090
+    depends_on:
+      - cube
+    restart: always
+
+  grafana:
+    extends:
+      file: common-services.yml
+      service: grafana
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
+    networks:
+      - stat-gateaway
+      - metrics
+    ports:
+      - 3000
+    depends_on:
+      - prometheus
+    restart: always
+
+  pgadmin4:
+    extends:
+      file: common-services.yml
+      service: pgadmin4
+    networks:
+      - database
+      - database_admin
+    ports:
+      - 80:80
+    depends_on:
+      - postgres_db
+    restart: always
+
+  cube: &cube-base
+    extends:
+      file: ../backend/docker/common-services.yml
+      service: cube
+    build:
+      context: ../backend
+      dockerfile: ../backend/docker/cube/Dockerfile
+    volumes:
+      - ../backend/out/crypto:/tmp/crypto/
+      - ../backend/cube/.prod.yml:/tmp/config.yml:ro
+    networks:
+      - backend
+      - database
+      - cache
+    expose:
+      - 10001
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 3
+
+  cube-testing:
+    <<: *cube-base
+    deploy:
+      mode: replicated
+      replicas: 1
+
+networks:
+  api-gateaway:
+    driver: bridge
+
+  stat-gateaway:
+    driver: bridge
+    internal: true
+
+  metrics:
+    driver: bridge
+    internal: true
+
+  backend:
+    driver: bridge
+    internal: true
+
+  cache:
+    driver: bridge
+    internal: true
+
+  database:
+    driver: bridge
+    internal: true
+
+  database_admin:
+    driver: bridge
+    internal: true

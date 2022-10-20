@@ -1,0 +1,48 @@
+{
+    "id": "08197c47-ce17-4048-80b3-8170e9369f90",
+    "name": "model weights 1",
+    "weights": [
+        {
+            "id": 1,
+            "link_id": 1,
+            "weight": 0.33
+        },
+        {
+            "id": 2,
+            "link_id": 2,
+            "weight": 0.21
+        },
+        {
+            "id": 3,
+            "link_id": 3,
+            "weight": 0.4
+        },
+        {
+            "id": 4,
+            "link_id": 4,
+            "weight": 0.6
+        }
+    ],
+    "offsets": [
+        {
+            "id": 1,
+            "neuron_id": 1,
+            "offset": 0.6
+        },
+        {
+            "id": 2,
+            "neuron_id": 2,
+            "offset": 0.6
+        },
+        {
+            "id": 3,
+            "neuron_id": 3,
+            "offset": 0.6
+        },
+        {
+            "id": 4,
+            "neuron_id": 4,
+            "offset": 0.6
+        }
+    ]
+}
