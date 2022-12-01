@@ -26,7 +26,7 @@ type UserInfoFilter struct {
 type UserInfoInteractor interface {
 	Register(ctx context.Context, info user.Info) (string, error)
 	Get(ctx context.Context, id string) (user.Info, error)
-	Find(ctx context.Context, filter UserInfoFilter) ([]user.Info, error)
+	Find(ctx context.Context, filter UserInfoFilter) ([]user.Info, int64, error)
 	Update(ctx context.Context, info user.Info) error
 	Block(ctx context.Context, userId string, until time.Time) error
 	Delete(ctx context.Context, userId string) error
@@ -37,7 +37,7 @@ type UserInfoInteractor interface {
 
 type ModelInfoFilter struct {
 	Owners []string
-	Ids    []string
+	IDs    []string
 	Offset int
 	Limit  int
 }
@@ -53,7 +53,7 @@ type ModelWeightsInfoFilter struct {
 type NeuralNetworkInteractor interface {
 	Add(ctx context.Context, info model.Info) (string, error)
 	Get(ctx context.Context, modelID string) (*model.Info, error)
-	Find(ctx context.Context, filter ModelInfoFilter) ([]*model.Info, error)
+	Find(ctx context.Context, filter ModelInfoFilter) ([]*model.Info, int64, error)
 	Delete(ctx context.Context, userID, modelID string) error
 
 	AddStructureWeights(ctx context.Context, ownerID string, modelID string, info sw.Info) (string, error)

@@ -8,7 +8,7 @@ import (
 	"neural_storage/pkg/logger"
 )
 
-func (i *Interactor) Find(ctx context.Context, filter interactors.ModelInfoFilter) ([]*model.Info, error) {
+func (i *Interactor) Find(ctx context.Context, filter interactors.ModelInfoFilter) ([]*model.Info, int64, error) {
 	lg := i.lg.WithFields(map[string]any{logger.ReqIDKey: ctx.Value(logger.ReqIDKey)})
 
 	lg.WithFields(map[string]any{"filter": filter}).Info("model find called")
@@ -17,7 +17,7 @@ func (i *Interactor) Find(ctx context.Context, filter interactors.ModelInfoFilte
 	return i.modelInfo.Find(
 		repositories.ModelInfoFilter{
 			Owners: filter.Owners,
-			Ids:    filter.Ids,
+			IDs:    filter.IDs,
 			Offset: filter.Offset,
 			Limit:  filter.Limit,
 		},

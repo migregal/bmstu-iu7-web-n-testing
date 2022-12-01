@@ -55,7 +55,7 @@ export const fullUserFlow = () => {
     });
 
     const auth_token = login_resp.json().token;
-    params.headers["Authorization"] = `Bearer ${auth_token}`;
+    params.headers["Authorization"] = `Token ${auth_token}`;
 
     const fd = new FormData();
     fd.append('title', randomString(20));

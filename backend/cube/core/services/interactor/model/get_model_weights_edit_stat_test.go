@@ -35,7 +35,7 @@ func (s *GetEditWeightsStatSuite) TestGetEditWeightsStat() {
 	info, err := s.interactor.GetWeightsEditStat(s.ctx, time.Time{}, time.Now())
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), info, expected)
+	require.Equal(s.T(), expected, info)
 
 	require.True(s.T(), s.mockedWeightsInfo.AssertExpectations(s.T()))
 }

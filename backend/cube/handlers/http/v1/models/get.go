@@ -3,10 +3,12 @@ package models
 import (
 	"errors"
 	"net/http"
-	"neural_storage/cube/core/ports/interactors"
-	"neural_storage/pkg/logger"
 
 	"github.com/gin-gonic/gin"
+
+	"neural_storage/cube/core/ports/interactors"
+	_ "neural_storage/cube/handlers/http/v1/entities/model"
+	"neural_storage/pkg/logger"
 )
 
 type getRequest struct {
@@ -30,9 +32,8 @@ func (h *Handler) Get(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req getRequest
-	if err := c.ShouldBindUri(&req); err != nil {
+	if err := c.BindUri(&req); err != nil {
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -52,11 +53,11 @@ func (h *Handler) Get(c *gin.Context) {
 
 	filter := interactors.ModelInfoFilter{}
 	if req.ModelID != "" {
-		filter.Ids = []string{req.ModelID}
+		filter.IDs = []string{req.ModelID}
 	}
 
 	lg.WithFields(map[string]any{"filter": filter}).Info("attempt to find model info")
-	infos, err := h.resolver.Find(c, filter)
+	infos, _, err := h.resolver.Find(c, filter)
 	if err != nil {
 		statFailGet.Inc()
 		lg.Errorf("failed to find model info: %v", err)

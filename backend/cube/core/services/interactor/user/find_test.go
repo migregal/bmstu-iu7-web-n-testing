@@ -32,12 +32,14 @@ func (s *FindSuite) TestFind() {
 	expected := []user.Info{
 		*user.NewInfo("", "", "", "", "", 0, time.Time{}),
 	}
+	expectedTotal := int64(10)
 
-	s.mockedRepo.On("Find", mock.Anything).Return(expected, nil)
-	info, err := s.interactor.Find(s.ctx, filter)
+	s.mockedRepo.On("Find", mock.Anything).Return(expected, expectedTotal, nil)
+	info, total, err := s.interactor.Find(s.ctx, filter)
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), info, expected)
+	require.Equal(s.T(), expected, info)
+	require.Equal(s.T(), expectedTotal, total)
 
 	require.True(s.T(), s.mockedRepo.AssertExpectations(s.T()))
 }

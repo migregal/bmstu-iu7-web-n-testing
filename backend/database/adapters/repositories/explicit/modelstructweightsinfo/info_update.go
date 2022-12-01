@@ -3,6 +3,8 @@ package modelstructweightsinfo
 import (
 	"fmt"
 	"neural_storage/cube/core/entities/structure/weights"
+	dboffset "neural_storage/database/core/entities/neuron/offset"
+	dbweight "neural_storage/database/core/entities/structure/weight"
 	"neural_storage/database/core/services/interactor/database"
 )
 
@@ -34,12 +36,27 @@ func (r *Repository) updateModelWeightsTransact(tx database.Interactor, info []a
 		if err := tx.Where("id = ?", v.weightsInfo.GetID()).Updates(&v.weightsInfo).Error; err != nil {
 			return fmt.Errorf("model weights info update: %w", err)
 		}
-		for _, w := range v.weights {
+
+		var weights []dbweight.Weight
+		if err := tx.Where("weights_info_id = ?", v.weightsInfo.GetID()).Find(&weights).Error; err != nil {
+			return fmt.Errorf("model weights update: %w", err)
+		}
+
+		for i, w := range v.weights {
+			w.InnerID = weights[i].InnerID
+
 			if err := tx.Where("id = ?", w.GetID()).Updates(&w).Error; err != nil {
 				return fmt.Errorf("model weights update: %w", err)
 			}
 		}
-		for _, o := range v.offsets {
+
+		var offsets []dboffset.Offset
+		if err := tx.Where("weights_info_id = ?", v.weightsInfo.GetID()).Find(&offsets).Error; err != nil {
+			return fmt.Errorf("model weights update: %w", err)
+		}
+		for i, o := range v.offsets {
+			o.InternalID = offsets[i].InternalID
+
 			if err := tx.Where("id = ?", o.GetID()).Updates(&o).Error; err != nil {
 				return fmt.Errorf("model offsets update: %w", err)
 			}

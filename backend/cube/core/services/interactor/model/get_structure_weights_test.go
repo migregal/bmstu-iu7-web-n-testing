@@ -31,7 +31,7 @@ func (s *GetStructureWeightsSuite) TestGet() {
 	info, err := s.interactor.GetStructureWeights(s.ctx, "")
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), info, expected)
+	require.Equal(s.T(), expected, info)
 
 	require.True(s.T(), s.mockedWeightsInfo.AssertExpectations(s.T()))
 }

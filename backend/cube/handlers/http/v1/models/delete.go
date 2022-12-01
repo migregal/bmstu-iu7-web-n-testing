@@ -47,10 +47,9 @@ func (h *Handler) Delete(c *gin.Context) {
 	}
 
 	var req DeleteRequest
-	if err := c.ShouldBindUri(&req); err != nil {
+	if err := c.BindUri(&req); err != nil {
 		statFailDelete.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 

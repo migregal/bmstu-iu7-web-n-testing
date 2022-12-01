@@ -3,10 +3,12 @@ package weights
 import (
 	"errors"
 	"net/http"
-	"neural_storage/cube/core/ports/interactors"
-	"neural_storage/pkg/logger"
 
 	"github.com/gin-gonic/gin"
+
+	"neural_storage/cube/core/ports/interactors"
+	_ "neural_storage/cube/handlers/http/v1/entities/structure/weights"
+	"neural_storage/pkg/logger"
 )
 
 type getRequest struct {
@@ -30,10 +32,9 @@ func (h *Handler) Get(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req getRequest
-	if err := c.ShouldBindUri(&req); err != nil {
+	if err := c.BindUri(&req); err != nil {
 		statFailGet.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 

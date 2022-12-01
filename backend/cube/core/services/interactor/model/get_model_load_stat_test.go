@@ -35,7 +35,7 @@ func (s *GetLoadModelStatSuite) TestGetLoadModelStat() {
 	info, err := s.interactor.GetModelLoadStat(s.ctx, time.Time{}, time.Now())
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), info, expected)
+	require.Equal(s.T(), expected, info)
 
 	require.True(s.T(), s.mockedModelInfo.AssertExpectations(s.T()))
 }

@@ -17,6 +17,7 @@ import (
 
 type AddRequest struct {
 	ModelID      string                `form:"model_id" binding:"required"`
+	WeightsTitle string                `form:"weights_title"`
 	Weights      *multipart.FileHeader `form:"weights" binding:"required"`
 }
 
@@ -26,6 +27,7 @@ type AddRequest struct {
 // @Tags         weights
 // @Accept       multipart/form-data
 // @Param        model_id        formData string true "Model ID to add weights to"
+// @Param        weights_title   formData string true "Model Weights title to add"
 // @Param        weights         formData file   true "Model Weights to add"
 // @Success      200 "Weights added"
 // @Failure      400 "Invalid request"
@@ -55,10 +57,9 @@ func (h *Handler) Add(c *gin.Context) {
 
 	var req AddRequest
 
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFailAdd.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -91,6 +92,9 @@ func (h *Handler) Add(c *gin.Context) {
 		lg.Errorf("failed to parse weights info: %v", err)
 		c.JSON(http.StatusBadRequest, "invalid weights format")
 		return
+	}
+	if req.WeightsTitle != "" {
+		w.Name = req.WeightsTitle
 	}
 
 	lg.WithFields(map[string]any{"user": usrID, "id": req.ModelID}).Info("attempt to add weights")

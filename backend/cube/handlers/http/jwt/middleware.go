@@ -25,7 +25,6 @@ type JWTMiddleware struct {
 
 type LoginResponse struct {
 	Token  string `json:"token" example:"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDc..."`
-	Expire string `json:"expire" example:"2022-03-20T17:00:01Z"`
 } // @name LoginResponse
 
 type Unauthorized struct {
@@ -59,17 +58,17 @@ func NewJWTMiddleware(
 		Authorizator: func(data any, c *gin.Context) bool {
 			return authorizator(c, data)
 		},
-		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
+		LoginResponse: func(c *gin.Context, code int, token string, _ time.Time) {
 			if code != http.StatusOK {
 				c.AbortWithStatus(code)
 			}
-			c.JSON(http.StatusOK, LoginResponse{token, expire.Format(time.RFC3339)})
+			c.JSON(http.StatusOK, LoginResponse{token})
 		},
-		RefreshResponse: func(c *gin.Context, code int, token string, expire time.Time) {
+		RefreshResponse: func(c *gin.Context, code int, token string, _ time.Time) {
 			if code != http.StatusOK {
 				c.AbortWithStatus(code)
 			}
-			c.JSON(http.StatusOK, LoginResponse{token, expire.Format(time.RFC3339)})
+			c.JSON(http.StatusOK, LoginResponse{token})
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, Unauthorized{message})

@@ -48,15 +48,15 @@ func (s *GetSuite) TestGet() {
 		structure.NewInfo(
 			"",
 			"awesome struct",
-			[]*neuron.Info{neuron.NewInfo(0, 0)},
-			[]*layer.Info{layer.NewInfo(0, "alpha", "beta")},
-			[]*link.Info{link.NewInfo(0, 0, 0)},
+			[]*neuron.Info{neuron.NewInfo(1, 1)},
+			[]*layer.Info{layer.NewInfo(1, "alpha", "beta")},
+			[]*link.Info{link.NewInfo(1, 1, 1)},
 			[]*weights.Info{
 				weights.NewInfo(
 					"",
 					"weights 1",
-					[]*weight.Info{weight.NewInfo(0, 0, 0.1)},
-					[]*offset.Info{offset.NewInfo(0, 0, 0.5)},
+					[]*weight.Info{weight.NewInfo(1, 1, 0.1)},
+					[]*offset.Info{offset.NewInfo(1, 1, 0.5)},
 				),
 			},
 		))

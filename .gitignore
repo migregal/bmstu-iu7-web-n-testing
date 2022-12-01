@@ -1,10 +1,8 @@
-# Created by https://www.toptal.com/developers/gitignore/api/go,macos,linux,goland,dotenv,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=go,macos,linux,goland,dotenv,visualstudiocode
+# Created by https://www.toptal.com/developers/gitignore/api/go,macos,linux,goland,dotenv,visualstudiocode,react,yarn
+# Edit at https://www.toptal.com/developers/gitignore?templates=go,macos,linux,goland,dotenv,visualstudiocode,react,yarn
 
 ### dotenv ###
-*.env
-.*.yml
-.*.yaml
+.env
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -194,6 +192,22 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+bower_components
+
+*.sublime*
+
+psd
+thumb
+sketch
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
@@ -213,10 +227,21 @@ Temporary Items
 .history
 .ionide
 
-# Support for Project snippet scope
-.vscode/*.code-snippets
+### yarn ###
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 
-# Ignore code-workspaces
-*.code-workspace
+.yarn/*
+!.yarn/releases
+!.yarn/patches
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
 
-# End of https://www.toptal.com/developers/gitignore/api/go,macos,linux,goland,dotenv,visualstudiocode
+# if you are NOT using Zero-installs, then:
+# comment the following lines
+!.yarn/cache
+
+# and uncomment the following lines
+# .pnp.*
+
+# End of https://www.toptal.com/developers/gitignore/api/go,macos,linux,goland,dotenv,visualstudiocode,react,yarn

@@ -45,10 +45,9 @@ func (h *Handler) Get(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req request
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFailGet.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -83,6 +82,6 @@ func (h *Handler) Get(c *gin.Context) {
 	}
 
 	statOKGet.Inc()
-	lg.WithFields(map[string]any{"res": resp}).Info("success")
+	lg.Info("success")
 	c.JSON(http.StatusOK, resp)
 }

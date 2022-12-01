@@ -188,7 +188,6 @@ func initModelsRoutes(
 
 		admModelManager := adminmodels.New(lg, adminInteractor)
 
-		v1.GET("/users/:user_id/models", modelManager.GetAll)
 		v1.GET("/models", modelManager.GetAll)
 
 		v1.GET("/models/:model_id", modelManager.Get)
@@ -249,7 +248,6 @@ func initWeightsRoutes(
 
 		admWeightManager := adminweights.New(lg, adminInterator)
 
-		v1.GET("/structures/:struct_id/weights", weightsManager.GetAll)
 		v1.GET("/weights", weightsManager.GetAll)
 
 		v1.GET("/weights/:weight_id", weightsManager.Get)

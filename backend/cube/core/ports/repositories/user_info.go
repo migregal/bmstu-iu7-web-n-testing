@@ -10,7 +10,7 @@ import (
 type UserInfoRepository interface {
 	Add(user.Info) (string, error)
 	Get(id string) (user.Info, error)
-	Find(filter UserInfoFilter) ([]user.Info, error)
+	Find(filter UserInfoFilter) ([]user.Info, int64, error)
 	Update(user.Info) error
 	Delete(user.Info) error
 

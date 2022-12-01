@@ -16,6 +16,10 @@ type getAllRequest struct {
 	PerPage     int    `form:"per_page"`
 }
 
+type getAllResponse struct {
+	Infos []weights.Info `json:"infos"`
+}
+
 // Registration  godoc
 // @Summary      Find structure weights info
 // @Description  Find such model info as id, username, email and fullname
@@ -28,17 +32,16 @@ type getAllRequest struct {
 // @Failure      401 "Unauthorized"
 // @Failure      404 "Not Found"
 // @Failure      500 "Failed to get model weights info from storage"
-// @Router       /v1/structures/{structure_id}/weights [get]
+// @Router       /v1/weights [get]
 // @security     ApiKeyAuth
 func (h *Handler) GetAll(c *gin.Context) {
 	statCallGet.Inc()
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req getAllRequest
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFailGet.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 	if structID := c.Param("structure_id"); structID != "" {
@@ -90,12 +93,13 @@ func (h *Handler) GetAll(c *gin.Context) {
 		res = append(res, weightFromBL(*val))
 	}
 
+	resp := getAllResponse{res}
 	if req.StructureID != "" {
-		if data, err := jsonGzip(res); err == nil {
+		if data, err := jsonGzip(resp); err == nil {
 			_ = h.cache.Update(weightStorage, req.StructureID, data)
 		}
 	}
 	statOKGet.Inc()
 	lg.Info("success")
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, resp)
 }

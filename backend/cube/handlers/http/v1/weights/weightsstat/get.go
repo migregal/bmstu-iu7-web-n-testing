@@ -34,7 +34,7 @@ type WeightsStatInfo struct {
 // @Param        to       query string   false "Time to stop at, RFC3339" format("2006-01-02T15:04:05Z07:00")
 // @Param        load     query boolean  false "Search for load stat"
 // @Param        update   query boolean  false "Search for update stats"
-// @Success      200 {object} []WeightsStatInfo "Users stat info found"
+// @Success      200 {object} []WeightsStatInfo "Weights stat info found"
 // @Failure      400 "Invalid request"
 // @Failure      401 "Unauthorized"
 // @Failure      500 "Failed to get user stat info"
@@ -45,10 +45,9 @@ func (h *Handler) Get(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req request
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFailGet.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -84,6 +83,6 @@ func (h *Handler) Get(c *gin.Context) {
 	}
 
 	statOKGet.Inc()
-	lg.WithFields(map[string]any{"res": resp}).Info("success")
+	lg.Info("success")
 	c.JSON(http.StatusOK, resp)
 }

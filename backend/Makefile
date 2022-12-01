@@ -54,7 +54,8 @@ smoke-test:
 
 .PHONY: generate
 generate:
-	cd cube && swag init -d ../cmd/cube/,./  -g ../../cube/handlers/fabric.go --parseDependency
+	go generate ./...
+	cd cube && swag init -d ../cmd/cube/,./  -g ../../cube/handlers/fabric.go --parseDependency && cd ..
 
 .PHONY: generate-crypto
 generate-crypto: OUT:=./out/crypto

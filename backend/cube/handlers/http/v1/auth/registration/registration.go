@@ -59,7 +59,7 @@ func (h *Handler) Registration(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req request
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFail.Inc()
 		lg.Errorf("failed to bind req: %v", err)
 		c.AbortWithStatus(http.StatusBadRequest)
@@ -73,7 +73,7 @@ func (h *Handler) Registration(c *gin.Context) {
 		Limit:     1,
 	}
 	lg.WithFields(map[string]any{"filter": filter}).Info("attempt to find user info")
-	infos, err := h.resolver.Find(c, filter)
+	infos, _, err := h.resolver.Find(c, filter)
 	if err != nil {
 		statFail.Inc()
 		lg.Errorf("failed to fetch user info: %v", err)

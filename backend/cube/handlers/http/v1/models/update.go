@@ -58,10 +58,9 @@ func (h *Handler) Update(c *gin.Context) {
 	}
 
 	var req UpdateRequest
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFailUpdate.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 

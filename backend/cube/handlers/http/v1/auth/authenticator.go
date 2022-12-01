@@ -50,7 +50,7 @@ func (h *Handler) Authenticator(roles []uint64) func(c *gin.Context) (any, error
 		lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 		var req request
-		if err := c.ShouldBind(&req); err != nil {
+		if err := c.Bind(&req); err != nil {
 			statFail.Inc()
 			lg.Errorf("failed to bind request: %v", err)
 			return "", ErrMissingCreds
@@ -58,8 +58,8 @@ func (h *Handler) Authenticator(roles []uint64) func(c *gin.Context) (any, error
 		lg.WithFields(map[string]any{"req": req}).Info("req binded")
 
 		filter := interactors.UserInfoFilter{Emails: []string{req.Email}, Limit: 1}
-		lg.WithFields(map[string]any{"filter": filter}).Info("attempt to find weights info")
-		infos, err := h.resolver.Find(c, filter)
+		lg.WithFields(map[string]any{"filter": filter}).Info("attempt to find user info")
+		infos, _, err := h.resolver.Find(c, filter)
 		if err != nil {
 			statFail.Inc()
 			lg.Errorf("failed to find user info: %v", err)

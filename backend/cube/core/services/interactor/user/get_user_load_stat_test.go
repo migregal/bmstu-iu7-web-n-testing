@@ -35,7 +35,7 @@ func (s *GetLoadStatSuite) TestGetLoadStat() {
 	info, err := s.interactor.GetUserRegistrationStat(s.ctx, time.Time{}, time.Now())
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), info, expected)
+	require.Equal(s.T(), expected, info)
 
 	require.True(s.T(), s.mockedRepo.AssertExpectations(s.T()))
 }

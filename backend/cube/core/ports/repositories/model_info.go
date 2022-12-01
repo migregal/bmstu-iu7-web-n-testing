@@ -13,7 +13,7 @@ type ModelInfoRepository interface {
 	Add(info model.Info) (string, error)
 	Update(info model.Info) error
 	Get(modelId string) (*model.Info, error)
-	Find(filter ModelInfoFilter) ([]*model.Info, error)
+	Find(filter ModelInfoFilter) ([]*model.Info, int64, error)
 	GetStructure(modelId string) (*structure.Info, error)
 	Delete(info model.Info) error
 
@@ -23,7 +23,7 @@ type ModelInfoRepository interface {
 
 type ModelInfoFilter struct {
 	Owners []string
-	Ids    []string
+	IDs    []string
 	Offset int
 	Limit  int
 }

@@ -10,9 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type updateRequest struct {
+type updateRequestURI struct {
 	UserId string    `uri:"user_id" binding:"required"`
-	Until  time.Time `json:"until" form:"until" binding:"required"`
+}
+
+type updateRequestJSON struct {
+	Until  time.Time `json:"until" binding:"required"`
 }
 
 // Registration  godoc
@@ -32,22 +35,21 @@ func (h *Handler) Update(c *gin.Context) {
 	statCallUpdate.Inc()
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
-	var req updateRequest
-	if err := c.ShouldBindUri(&req); err != nil || req.UserId == "" {
+	var reqURI updateRequestURI
+	if err := c.BindUri(&reqURI); err != nil || reqURI.UserId == "" {
 		statFailUpdate.Inc()
-		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
+		lg.Errorf("failed to bind request uri: %v", err)
 		return
 	}
-	if err := c.ShouldBind(&req); err != nil || req.UserId == "" {
+	var reqJSON updateRequestJSON
+	if err := c.Bind(&reqJSON); err != nil || reqJSON.Until.IsZero() {
 		statFailUpdate.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	lg.WithFields(map[string]any{"req": req}).Info("attempt to block user")
-	err := h.resolver.Block(c, req.UserId, req.Until)
+	lg.WithFields(map[string]any{"req": reqURI}).Info("attempt to block user")
+	err := h.resolver.Block(c, reqURI.UserId, reqJSON.Until)
 	if err != nil {
 		statFailUpdate.Inc()
 		lg.Errorf("failed to block user: %v", err)

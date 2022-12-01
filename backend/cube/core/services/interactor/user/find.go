@@ -8,7 +8,7 @@ import (
 	"neural_storage/pkg/logger"
 )
 
-func (i *Interactor) Find(ctx context.Context, filter interactors.UserInfoFilter) ([]user.Info, error) {
+func (i *Interactor) Find(ctx context.Context, filter interactors.UserInfoFilter) ([]user.Info, int64, error) {
 	lg := i.lg.WithFields(map[string]any{logger.ReqIDKey: ctx.Value(logger.ReqIDKey)})
 
 	lg.WithFields(map[string]any{"filter": filter}).Info("user find called")
