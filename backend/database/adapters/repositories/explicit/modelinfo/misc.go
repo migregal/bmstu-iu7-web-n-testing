@@ -119,23 +119,25 @@ func fromDBEntity(info accumulatedModelInfo) model.Info {
 	layerMap := map[string]int{}
 	var layers []*layer.Info
 	for i, v := range info.layers {
-		layerMap[v.GetID()] = i
+		layerMap[v.GetID()] = i + 1
 		layers = append(
 			layers,
-			layer.NewInfo(i, v.GetLimitFunc(), v.GetActivationFunc()))
+			layer.NewInfo(i+1, v.GetLimitFunc(), v.GetActivationFunc()))
 	}
 
 	neuronMap := map[string]int{}
 	var neurons []*neuron.Info
 	for i := range info.neurons {
-		layerMap[info.neurons[i].GetID()] = i
+		neuronMap[info.neurons[i].GetID()] = i + 1
 		neurons = append(
 			neurons,
-			neuron.NewInfo(i, layerMap[info.neurons[i].GetLayerID()]))
+			neuron.NewInfo(i+1, layerMap[info.neurons[i].GetLayerID()]))
 	}
 
+	linkMap := map[string]int{}
 	var links []*link.Info
 	for i := range info.links {
+		linkMap[info.links[i].GetID()] = i + 1
 		links = append(
 			links,
 			link.NewInfo(
@@ -151,12 +153,12 @@ func fromDBEntity(info accumulatedModelInfo) model.Info {
 		var offsets []*offset.Info
 		for j, v := range w.offsets {
 			offsets = append(offsets,
-				offset.NewInfo(j, neuronMap[v.GetNeuronID()], v.GetValue()))
+				offset.NewInfo(j+1, neuronMap[v.GetNeuronID()], v.GetValue()))
 		}
 		var linkWeights []*weight.Info
 		for j, v := range w.weights {
 			linkWeights = append(linkWeights,
-				weight.NewInfo(j, neuronMap[v.GetLinkID()], v.GetValue()))
+				weight.NewInfo(j+1, linkMap[v.GetLinkID()], v.GetValue()))
 		}
 		var info *weights.Info
 		if w.weightsInfo != nil {

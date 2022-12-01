@@ -10,7 +10,7 @@ import (
 )
 
 type request struct {
-	UserId string `uri:"id" binding:"required"`
+	UserId string `uri:"user_id" binding:"required"`
 }
 
 type UserInfo struct {
@@ -38,10 +38,9 @@ func (h *Handler) Get(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req request
-	if err := c.ShouldBindUri(&req); err != nil {
+	if err := c.BindUri(&req); err != nil {
 		statFail.Inc()
 		lg.Error("failed to bind request")
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -51,7 +50,7 @@ func (h *Handler) Get(c *gin.Context) {
 	}
 
 	lg.WithFields(map[string]any{"filter": filter}).Info("attempt to find user info")
-	infos, err := h.resolver.Find(c, filter)
+	infos, _, err := h.resolver.Find(c, filter)
 	if err != nil {
 		statFail.Inc()
 		lg.Error("failed to fetch user info")

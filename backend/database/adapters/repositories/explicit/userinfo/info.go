@@ -47,7 +47,7 @@ func (r *Repository) Get(id string) (user.Info, error) {
 	return fromDBEntity(res), nil
 }
 
-func (r *Repository) Find(filter repositories.UserInfoFilter) ([]user.Info, error) {
+func (r *Repository) Find(filter repositories.UserInfoFilter) ([]user.Info, int64, error) {
 	query := r.db.DB
 
 	if len(filter.UserIds) > 0 {
@@ -60,7 +60,7 @@ func (r *Repository) Find(filter repositories.UserInfoFilter) ([]user.Info, erro
 		query = query.Where("email in ?", filter.Emails)
 	}
 	if filter.Offset > 0 {
-		query = query.Offset(filter.Offset)
+		query = query.Offset(filter.Offset*filter.Limit)
 	}
 	if filter.Limit > 0 {
 		query = query.Limit(filter.Limit)
@@ -70,10 +70,13 @@ func (r *Repository) Find(filter repositories.UserInfoFilter) ([]user.Info, erro
 
 	err := query.Find(&res).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return fromDBEntities(res), nil
+	var total int64
+	r.db.Table(user_info.UserInfo{}.TableName()).Count(&total)
+
+	return fromDBEntities(res), total, nil
 }
 
 func (r *Repository) Update(info user.Info) error {

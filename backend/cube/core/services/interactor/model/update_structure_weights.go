@@ -26,8 +26,8 @@ func (i *Interactor) UpdateStructureWeights(ctx context.Context, ownerID, modelI
 
 	model.Structure().SetWeights([]*sw.Info{&info})
 
-	lg.Error("invalid result model info")
 	if err := i.validator.ValidateModelInfo(model); err != nil {
+		lg.Error("invalid result model info")
 		return err
 	}
 

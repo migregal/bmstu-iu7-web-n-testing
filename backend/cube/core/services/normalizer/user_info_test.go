@@ -39,7 +39,7 @@ func (s *UserInfoSuite) TestValidateUserInfo() {
 	i, err := n.NormalizeUserInfo(*info)
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), i.Pwd(), expected)
+	require.Equal(s.T(), expected, i.Pwd())
 }
 
 func TestUserInfoSuite(t *testing.T) {

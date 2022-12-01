@@ -551,64 +551,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/structures/{structure_id}/weights": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Find such model info as id, username, email and fullname",
-                "tags": [
-                    "weights"
-                ],
-                "summary": "Find structure weights info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Structure ID to search for",
-                        "name": "structure_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page number for pagination",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page size for pagination",
-                        "name": "per_page",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Model weights info found",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/weights.Info"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    },
-                    "500": {
-                        "description": "Failed to get model weights info from storage"
-                    }
-                }
-            }
-        },
         "/v1/users": {
             "get": {
                 "security": [
@@ -654,10 +596,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Users info found",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/UserInfoResponse"
-                            }
+                            "$ref": "#/definitions/GetAllUsersResponse"
                         }
                     },
                     "400": {
@@ -783,7 +722,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/{user_id}/models": {
+        "/v1/weights": {
             "get": {
                 "security": [
                     {
@@ -792,15 +731,15 @@ const docTemplate = `{
                 ],
                 "description": "Find such model info as id, username, email and fullname",
                 "tags": [
-                    "models"
+                    "weights"
                 ],
-                "summary": "Find models info",
+                "summary": "Find structure weights info",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User ID that owns models to search for",
-                        "name": "user_id",
-                        "in": "path",
+                        "description": "Structure ID to search for",
+                        "name": "structure_id",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -818,11 +757,11 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Model info found",
+                        "description": "Model weights info found",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Info"
+                                "$ref": "#/definitions/weights.Info"
                             }
                         }
                     },
@@ -836,12 +775,10 @@ const docTemplate = `{
                         "description": "Not Found"
                     },
                     "500": {
-                        "description": "Failed to get model info from storage"
+                        "description": "Failed to get model weights info from storage"
                     }
                 }
-            }
-        },
-        "/v1/weights": {
+            },
             "post": {
                 "security": [
                     {
@@ -861,6 +798,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Model ID to add weights to",
                         "name": "model_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Model Weights title to add",
+                        "name": "weights_title",
                         "in": "formData",
                         "required": true
                     },
@@ -933,7 +877,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Users stat info found",
+                        "description": "Weights stat info found",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -1098,6 +1042,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "GetAllUsersResponse": {
+            "type": "object",
+            "properties": {
+                "infos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserInfoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "LoginRequest": {
             "type": "object",
             "required": [
@@ -1118,10 +1076,6 @@ const docTemplate = `{
         "LoginResponse": {
             "type": "object",
             "properties": {
-                "expire": {
-                    "type": "string",
-                    "example": "2022-03-20T17:00:01Z"
-                },
                 "token": {
                     "type": "string",
                     "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDc..."

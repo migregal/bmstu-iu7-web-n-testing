@@ -11,26 +11,15 @@ import (
 )
 
 type getAllRequest struct {
-	OwnerID string `uri:"user_id"`
+	OwnerID string `form:"user_id"`
 	Page    int    `form:"page"`
 	PerPage int    `form:"per_page"`
 }
 
-// Registration  godoc
-// @Summary      Find models info
-// @Description  Find such model info as id, username, email and fullname
-// @Tags         models
-// @Param        user_id  path  string true  "User ID that owns models to search for"
-// @Param        page     query int    false "Page number for pagination"
-// @Param        per_page query int    false "Page size for pagination"
-// @Success      200 {object} []model.Info "Model info found"
-// @Failure      400 "Invalid request"
-// @Failure      401 "Unauthorized"
-// @Failure      404 "Not Found"
-// @Failure      500 "Failed to get model info from storage"
-// @Router       /v1/users/{user_id}/models [get]
-// @security     ApiKeyAuth
-func _() {}
+type getAllResponse struct {
+	Infos []model.Info `json:"infos"`
+	Total int64        `json:"total"`
+} // @name GetAllUsersResponse
 
 // Registration  godoc
 // @Summary      Find models info
@@ -49,9 +38,8 @@ func (h *Handler) GetAll(c *gin.Context) {
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})
 
 	var req getAllRequest
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 	if owner_id := c.Param("user_id"); owner_id != "" {
@@ -85,7 +73,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 	filter.Limit = req.PerPage
 
 	lg.WithFields(map[string]any{"filter": filter}).Info("attempt to find model info")
-	infos, err := h.resolver.Find(c, filter)
+	infos, total, err := h.resolver.Find(c, filter)
 	if err != nil {
 		statFailGet.Inc()
 		lg.Errorf("failed to find model info: %v", err)
@@ -98,10 +86,11 @@ func (h *Handler) GetAll(c *gin.Context) {
 		return
 	}
 
-	var res []model.Info
+	var res getAllResponse
 	for _, val := range infos {
-		res = append(res, modelFromBL(val))
+		res.Infos = append(res.Infos, modelFromBL(val))
 	}
+	res.Total = total
 
 	if req.OwnerID != "" {
 		if data, err := jsonGzip(res); err == nil {

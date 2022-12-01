@@ -1,6 +1,7 @@
 package weights
 
 import (
+	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"io"
@@ -15,9 +16,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type UpdateRequestURI struct {
+	WeightsID string `uri:"weight_id" binding:"required"`
+}
+
 type UpdateRequest struct {
-	ModelID      string                `uri:"model_id" binding:"required"`
-	WeightsID    string                `uri:"weight_id"`
+	ModelID      string                `form:"model_id" binding:"required"`
 	WeightsTitle string                `form:"weights_title"`
 	Weights      *multipart.FileHeader `form:"weights"`
 }
@@ -57,11 +61,16 @@ func (h *Handler) Update(c *gin.Context) {
 		return
 	}
 
-	var req UpdateRequest
-	if err := c.ShouldBind(&req); err != nil {
+	var reqURI UpdateRequestURI
+	if err := c.BindUri(&reqURI); err != nil {
 		statFailUpdate.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	var req UpdateRequest
+	if err := c.Bind(&req); err != nil {
+		statFailUpdate.Inc()
+		lg.Errorf("failed to bind request: %v", err)
 		return
 	}
 
@@ -72,7 +81,17 @@ func (h *Handler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	plan, err := io.ReadAll(content)
+
+	r, err := gzip.NewReader(content)
+	if err != nil {
+		statFailAdd.Inc()
+		lg.Errorf("failed to read gzipped weights info: %v", err)
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	defer r.Close()
+
+	plan, err := io.ReadAll(r)
 	if err != nil {
 		statFailUpdate.Inc()
 		lg.Errorf("failed to read weights info: %v", err)
@@ -86,6 +105,11 @@ func (h *Handler) Update(c *gin.Context) {
 		lg.Errorf("failed to parse weights info: %v", err)
 		c.JSON(http.StatusBadRequest, "invalid weights format")
 		return
+	}
+	w.ID = reqURI.WeightsID
+
+	if req.WeightsTitle != "" {
+		w.Name = req.WeightsTitle
 	}
 
 	lg.WithFields(map[string]any{"user": usrID, "id": req.ModelID}).Info("attempt to update model")
@@ -104,7 +128,7 @@ func (h *Handler) Update(c *gin.Context) {
 	lg.Info("attempt to delete model from cache")
 	_ = h.cache.Delete(modelStorage, req.ModelID)
 	lg.Info("attempt to delete weight from cache")
-	_ = h.cache.Delete(weightStorage, req.WeightsID)
+	_ = h.cache.Delete(weightStorage, reqURI.WeightsID)
 
 	statOKUpdate.Inc()
 	lg.Info("success")

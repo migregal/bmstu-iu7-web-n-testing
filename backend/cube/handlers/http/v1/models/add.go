@@ -62,10 +62,9 @@ func (h *Handler) Add(c *gin.Context) {
 
 	var req AddRequest
 
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		statFailAdd.Inc()
 		lg.Errorf("failed to bind request: %v", err)
-		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 

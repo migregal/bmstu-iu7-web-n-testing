@@ -31,7 +31,7 @@ func (s *GetSuite) TestGet() {
 	info, err := s.interactor.Get(s.ctx, expected.ID())
 
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), info, expected)
+	require.Equal(s.T(), expected, info)
 
 	require.True(s.T(), s.mockedModelInfo.AssertExpectations(s.T()))
 }

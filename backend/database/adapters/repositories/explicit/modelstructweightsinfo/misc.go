@@ -55,7 +55,6 @@ func toDBEntityStructured(structureID string, neurons, links map[int]string, inf
 		temp := accumulatedWeightInfo{}
 		temp.weightsInfo = &dbweights.Weights{
 			ID:          i,
-			InnerID:     w.ID(),
 			Name:        w.Name(),
 			StructureID: structureID,
 		}

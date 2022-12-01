@@ -35,7 +35,7 @@ func (r *Repository) deleteModelWeightsTransact(tx database.Interactor, info []a
 	for _, v := range info {
 		if v.weightsInfo != nil {
 			if err := tx.Where("id = ?", v.weightsInfo.GetID()).Delete(&v.weightsInfo).Error; err != nil {
-				return fmt.Errorf("model weights infp delete: %w", err)
+				return fmt.Errorf("model weights info delete: %w", err)
 			}
 			continue
 		}
