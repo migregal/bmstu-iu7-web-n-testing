@@ -39,8 +39,9 @@ lint_pkg:
 	$(call lint_folder,pkg)
 
 .PHONY: unit-test
+unit-test: OUT:=./out
 unit-test:
-	go test $(TESTFLAGS) --tags="unit" $(PKG)/...
+	go test -cover -coverprofile=$(OUT)/unit-cover.out -covermode=atomic -coverpkg=$(PKG)/... $(TESTFLAGS) --tags="unit" $(PKG)/...
 
 .PHONY: smoke-test
 smoke-test: OUT=./out/smoke-coverage.out
@@ -51,6 +52,11 @@ smoke-test:
 	docker compose -f ./docker/docker-compose.smoke.yml down || true
 	go tool cover -html=$(OUT) -o $(HTML) || true
 	go tool cover -func=$(OUT) || true
+
+.PHONY: coverage
+coverage: OUT:=./out
+coverage:
+	go tool cover -html=$(OUT)/unit-cover.out
 
 .PHONY: generate
 generate:
