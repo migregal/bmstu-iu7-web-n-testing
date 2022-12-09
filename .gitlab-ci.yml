@@ -1,0 +1,21 @@
+stages:
+  - lint
+  - unit-test
+
+lint-backend:
+  stage: lint
+  image: golangci/golangci-lint:v1.49
+  script:
+    - make lint-backend
+
+lint-frontend:
+  stage: lint
+  image: node:19-bullseye
+  script:
+    - make lint-frontend
+
+unit-tests:
+  stage: unit-test
+  image: golang:1.19.1
+  script:
+    - make unit-test
