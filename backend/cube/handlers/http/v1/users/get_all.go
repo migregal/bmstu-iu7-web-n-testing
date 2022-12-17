@@ -10,14 +10,14 @@ import (
 )
 
 type getAllRequest struct {
-	Page     int    `form:"page"`
-	PerPage  int    `form:"per_page"`
+	Page    int `form:"page"`
+	PerPage int `form:"per_page"`
 }
 
 type getAllResponse struct {
 	Infos []UserInfo `json:"infos"`
-	Total int64 `json:"total"`
-}// @name GetAllUsersResponse
+	Total int64      `json:"total"`
+} // @name GetAllUsersResponse
 
 // Registration  godoc
 // @Summary      Find users info

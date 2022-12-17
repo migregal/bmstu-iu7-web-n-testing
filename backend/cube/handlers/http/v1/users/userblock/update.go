@@ -11,11 +11,11 @@ import (
 )
 
 type updateRequestURI struct {
-	UserId string    `uri:"user_id" binding:"required"`
+	UserId string `uri:"user_id" binding:"required"`
 }
 
 type updateRequestJSON struct {
-	Until  time.Time `json:"until" binding:"required"`
+	Until time.Time `json:"until" binding:"required"`
 }
 
 // Registration  godoc

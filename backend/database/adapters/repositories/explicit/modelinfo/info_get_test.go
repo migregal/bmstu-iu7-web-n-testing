@@ -90,15 +90,15 @@ func (s *GetSuite) TestGet() {
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "weights_info" WHERE structure_id = .*$`).
 		WillReturnRows(utils.MockRows(dbweights.Weights{
-			InnerID:   info.Structure().Weights()[0].ID(),
-			Name: info.Structure().Weights()[0].Name()}))
+			InnerID: info.Structure().Weights()[0].ID(),
+			Name:    info.Structure().Weights()[0].Name()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "neuron_offsets" WHERE weights_info_id = .*$`).
 		WillReturnRows(utils.MockRows(dboffset.Offset{
 			InnerWeights: info.Structure().Weights()[0].ID(),
-			ID:      info.Structure().Weights()[0].Offsets()[0].ID(),
-			Neuron:  info.Structure().Weights()[0].Offsets()[0].NeuronID(),
-			Offset:  info.Structure().Weights()[0].Offsets()[0].Offset()}))
+			ID:           info.Structure().Weights()[0].Offsets()[0].ID(),
+			Neuron:       info.Structure().Weights()[0].Offsets()[0].NeuronID(),
+			Offset:       info.Structure().Weights()[0].Offsets()[0].Offset()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "link_weights" WHERE weights_info_id = .*$`).
 		WillReturnRows(utils.MockRows(dbweight.Weight{

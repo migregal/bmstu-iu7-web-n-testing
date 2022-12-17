@@ -7,6 +7,9 @@ else
 TESTFLAGS:=-race
 endif
 
+
+# lint =========================================================================
+
 define lint_project
 	golangci-lint run --build-tags="unit" ./$(1)/... && golangci-lint run --build-tags="unit" ./cmd/$(1)/...
 endef
@@ -38,10 +41,51 @@ lint_database:
 lint_pkg:
 	$(call lint_folder,pkg)
 
+# lint ^========================================================================
+
+# unit =========================================================================
+
 .PHONY: unit-test
 unit-test: OUT:=./out
 unit-test:
-	go test -cover -coverprofile=$(OUT)/unit-cover.out -covermode=atomic -coverpkg=$(PKG)/... $(TESTFLAGS) --tags="unit" $(PKG)/...
+	mkdir -p $(OUT)/unit
+	go test -cover -coverprofile=$(OUT)/unit/coverage.out -covermode=atomic \
+	-coverpkg=$(PKG)/... $(TESTFLAGS) --tags="unit" $(PKG)/...
+
+.PHONY: coverage
+coverage: OUT:=./out
+coverage:
+	go tool cover -html=$(OUT)/unit/coverage.out -o $(OUT)/unit/index.html
+
+
+.PHONY: cobertura
+cobertura: OUT:=./out
+cobertura:
+	go install github.com/t-yuki/gocover-cobertura@latest
+	$(GOPATH)/bin/gocover-cobertura < $(OUT)/unit/coverage.out > $(OUT)/unit/coverage.xml
+
+# unit ^========================================================================
+
+# integration ==================================================================
+
+.PHONY: bootstrap-database
+bootstrap-database:
+	$(MAKE) -C ./database bootstrap-database
+
+.PHONY: bootstrap-backend
+bootstrap-backend: ci :=
+bootstrap-backend:
+	$(MAKE) -C ./utils bootstrap
+	python3 ./utils/j2.py ./cube/cube.yml.j2 $(if ci,./cube/vars-ci.yml,./cube/vars.yml) > cube.yml
+
+.PHONY: build
+build: OUT=./out
+build:
+	go build -o $(OUT)/cube.out ./cmd/cube/main.go
+
+.PHONY: integration-test
+integration-test:
+	$(MAKE) -C ./test integration-bootstrap integration-test
 
 .PHONY: smoke-test
 smoke-test: OUT=./out/smoke-coverage.out
@@ -53,10 +97,9 @@ smoke-test:
 	go tool cover -html=$(OUT) -o $(HTML) || true
 	go tool cover -func=$(OUT) || true
 
-.PHONY: coverage
-coverage: OUT:=./out
-coverage:
-	go tool cover -html=$(OUT)/unit-cover.out
+# integration ^=================================================================
+
+# misc =========================================================================
 
 .PHONY: generate
 generate:
@@ -71,3 +114,5 @@ generate-crypto:
 	openssl rsa -in $(OUT)/keypair.pem -pubout -out $(OUT)/publickey.crt
 	openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in $(OUT)/keypair.pem -out $(OUT)/pkcs8.key
 	@rm $(OUT)/keypair.pem
+
+# misc ^========================================================================

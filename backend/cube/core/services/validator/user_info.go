@@ -35,7 +35,7 @@ func (v *Validator) validateUsername(username string) bool {
 				return false
 			}
 
-			if !unicode.IsDigit(value[i]) && !unicode.IsLetter(value[i]) {
+			if !unicode.IsDigit(value[i]) && !unicode.IsLetter(value[i]) && value[i] != '_' {
 				return false
 			}
 		}

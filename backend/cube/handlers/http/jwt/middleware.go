@@ -24,7 +24,7 @@ type JWTMiddleware struct {
 }
 
 type LoginResponse struct {
-	Token  string `json:"token" example:"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDc..."`
+	Token string `json:"token" example:"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDc..."`
 } // @name LoginResponse
 
 type Unauthorized struct {

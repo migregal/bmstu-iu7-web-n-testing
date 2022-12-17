@@ -37,7 +37,6 @@ services:
     env_file: ./migration/.env
     volumes:
       - ../database/migration:/usr/app
-      - ../database/migration/init/:/docker-entrypoint-initdb.d/
 
   tarantool-db:
     image: tarantool/tarantool:2.8

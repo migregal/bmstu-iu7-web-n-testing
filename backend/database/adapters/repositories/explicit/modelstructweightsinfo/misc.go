@@ -84,27 +84,6 @@ func toDBEntityStructured(structureID string, neurons, links map[int]string, inf
 	return weights
 }
 
-//nolint:unused
-func fromDBEntity(info accumulatedWeightInfo) *weights.Info {
-	var offsets []*offset.Info
-	for i, v := range info.offsets {
-		offsets = append(offsets, offset.NewInfo(i, v.Neuron, v.GetValue()))
-	}
-	var linkWeights []*weight.Info
-	for i, v := range info.weights {
-		linkWeights = append(linkWeights,
-			weight.NewInfo(i, v.LinkID, v.GetValue()))
-	}
-	var wInfo = weights.NewInfo(
-		info.weightsInfo.GetID(),
-		info.weightsInfo.GetName(),
-		linkWeights,
-		offsets,
-	)
-
-	return wInfo
-}
-
 func fromDBEntityStructured(neurons, links map[string]int, info accumulatedWeightInfo) *weights.Info {
 	var offsets []*offset.Info
 	for i, v := range info.offsets {

@@ -11,7 +11,6 @@ type deleteRequest struct {
 	UserId string `uri:"user_id"`
 }
 
-
 func (h *Handler) Delete(c *gin.Context) {
 	statCallDelete.Inc()
 	lg := h.lg.WithFields(map[string]any{logger.ReqIDKey: c.Value(logger.ReqIDKey)})

@@ -1,3 +1,7 @@
+.PHONY: bootstrap
+bootstrap:
+	@npm install
+
 .PHONY: build
 build:
 	@npm run build

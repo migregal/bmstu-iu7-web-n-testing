@@ -11,8 +11,8 @@ import (
 	"neural_storage/cube/core/entities/structure"
 	"neural_storage/cube/core/entities/structure/layer"
 	"neural_storage/cube/core/entities/structure/weights"
-	dblink "neural_storage/database/core/entities/neuron/link"
 	dbneuron "neural_storage/database/core/entities/neuron"
+	dblink "neural_storage/database/core/entities/neuron/link"
 	dboffset "neural_storage/database/core/entities/neuron/offset"
 	dbweight "neural_storage/database/core/entities/structure/weight"
 	dbweights "neural_storage/database/core/entities/structure/weights"
@@ -57,22 +57,22 @@ func (s *GetSuite) TestGet() {
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "weights_info" WHERE id = .*$`).
 		WillReturnRows(utils.MockRows(dbweights.Weights{
-			InnerID:   structureInfo.Weights()[0].ID(),
-			Name: structureInfo.Weights()[0].Name()}))
+			InnerID: structureInfo.Weights()[0].ID(),
+			Name:    structureInfo.Weights()[0].Name()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "neuron_offsets" WHERE weights_info_id = .*$`).
 		WillReturnRows(utils.MockRows(dboffset.Offset{
 			InnerWeights: structureInfo.Weights()[0].ID(),
-			ID:      structureInfo.Weights()[0].Offsets()[0].ID(),
-			Neuron:  structureInfo.Weights()[0].Offsets()[0].NeuronID(),
-			Offset:  structureInfo.Weights()[0].Offsets()[0].Offset()}))
+			ID:           structureInfo.Weights()[0].Offsets()[0].ID(),
+			Neuron:       structureInfo.Weights()[0].Offsets()[0].NeuronID(),
+			Offset:       structureInfo.Weights()[0].Offsets()[0].Offset()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "link_weights" WHERE weights_info_id = .*$`).
 		WillReturnRows(utils.MockRows(dbweight.Weight{
 			InnerWeightsID: structureInfo.Weights()[0].ID(),
-			ID:        structureInfo.Weights()[0].Weights()[0].ID(),
-			LinkID:    structureInfo.Weights()[0].Weights()[0].LinkID(),
-			Value:     structureInfo.Weights()[0].Weights()[0].Weight()}))
+			ID:             structureInfo.Weights()[0].Weights()[0].ID(),
+			LinkID:         structureInfo.Weights()[0].Weights()[0].LinkID(),
+			Value:          structureInfo.Weights()[0].Weights()[0].Weight()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "neurons" WHERE id in .*$`).
 		WillReturnRows(utils.MockRows(dblink.Link{

@@ -56,6 +56,8 @@ type Server interface {
 }
 
 func New(params config.Config, lg *logger.Logger) Server {
+	gin.SetMode(gin.ReleaseMode)
+
 	engine := gin.New()
 
 	engine.Use(gin.Recovery())

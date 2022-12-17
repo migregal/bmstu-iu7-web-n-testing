@@ -5,8 +5,8 @@ import (
 )
 
 type Info struct {
-	ID        string         `json:"id"`
-	Name      string         `json:"title"`
-	OwnerID   string         `json:"owner_id"`
+	ID        string          `json:"id"`
+	Name      string          `json:"title"`
+	OwnerID   string          `json:"owner_id"`
 	Structure *structure.Info `json:"structure,omitempty"`
 }

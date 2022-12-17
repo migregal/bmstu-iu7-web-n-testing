@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	modelStorage = "model"
+	modelStorage  = "model"
 	weightStorage = "weight"
 )
 

@@ -1,6 +1,5 @@
 package link
 
-
 func (i *Link) GetID() string {
 	return i.InnerID
 }
