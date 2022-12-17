@@ -6,7 +6,6 @@ import (
 	"neural_storage/pkg/stat"
 )
 
-
 var (
 	statCall stat.Counter
 	statFail stat.Counter

@@ -13,10 +13,10 @@ import (
 	"neural_storage/cube/core/entities/neuron/offset"
 	"neural_storage/cube/core/entities/structure/weights"
 	dbneuron "neural_storage/database/core/entities/neuron"
-	dboffset "neural_storage/database/core/entities/neuron/offset"
 	dblink "neural_storage/database/core/entities/neuron/link"
-	dbweights "neural_storage/database/core/entities/structure/weights"
+	dboffset "neural_storage/database/core/entities/neuron/offset"
 	dblayer "neural_storage/database/core/entities/structure/layer"
+	dbweights "neural_storage/database/core/entities/structure/weights"
 	"neural_storage/database/test/mock/utils"
 )
 

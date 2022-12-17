@@ -56,27 +56,27 @@ func (s *FindSuite) TestFind() {
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "weights_info" WHERE id in .*$`).
 		WillReturnRows(utils.MockRows(dbweights.Weights{
-			InnerID:   structureInfo.Weights()[0].ID(),
-			Name: structureInfo.Weights()[0].Name()}))
+			InnerID: structureInfo.Weights()[0].ID(),
+			Name:    structureInfo.Weights()[0].Name()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "weights_info" WHERE id = .* ORDER BY .* LIMIT 1$`).
 		WillReturnRows(utils.MockRows(dbweights.Weights{
-			InnerID:   structureInfo.Weights()[0].ID(),
-			Name: structureInfo.Weights()[0].Name()}))
+			InnerID: structureInfo.Weights()[0].ID(),
+			Name:    structureInfo.Weights()[0].Name()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "neuron_offsets" WHERE weights_info_id = .*$`).
 		WillReturnRows(utils.MockRows(dboffset.Offset{
 			InnerWeights: structureInfo.Weights()[0].ID(),
-			ID:      structureInfo.Weights()[0].Offsets()[0].ID(),
-			Neuron:  structureInfo.Weights()[0].Offsets()[0].NeuronID(),
-			Offset:  structureInfo.Weights()[0].Offsets()[0].Offset()}))
+			ID:           structureInfo.Weights()[0].Offsets()[0].ID(),
+			Neuron:       structureInfo.Weights()[0].Offsets()[0].NeuronID(),
+			Offset:       structureInfo.Weights()[0].Offsets()[0].Offset()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "link_weights" WHERE weights_info_id = .*$`).
 		WillReturnRows(utils.MockRows(dbweight.Weight{
 			InnerWeightsID: structureInfo.Weights()[0].ID(),
-			ID:        structureInfo.Weights()[0].Weights()[0].ID(),
-			LinkID:    structureInfo.Weights()[0].Weights()[0].LinkID(),
-			Value:     structureInfo.Weights()[0].Weights()[0].Weight()}))
+			ID:             structureInfo.Weights()[0].Weights()[0].ID(),
+			LinkID:         structureInfo.Weights()[0].Weights()[0].LinkID(),
+			Value:          structureInfo.Weights()[0].Weights()[0].Weight()}))
 	s.SqlMock.
 		ExpectQuery(`^SELECT \* FROM "neurons" WHERE id in .*$`).
 		WillReturnRows(utils.MockRows(dblink.Link{

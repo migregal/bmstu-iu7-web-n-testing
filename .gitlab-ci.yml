@@ -1,6 +1,23 @@
 stages:
+  - bootstrap
   - lint
   - unit-test
+  - build
+  - integration-test
+  - report
+
+bootstrap-frontend:
+  stage: bootstrap
+  image: node:19-bullseye
+  cache:
+    key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+    paths:
+      - frontend/node_modules/
+  script:
+    - make bootstrap-frontend
+  only:
+    changes:
+      - frontend/package-lock.json
 
 lint-backend:
   stage: lint
@@ -11,6 +28,11 @@ lint-backend:
 lint-frontend:
   stage: lint
   image: node:19-bullseye
+  cache:
+    key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+    paths:
+      - node_modules/
+    policy: pull
   script:
     - make lint-frontend
 
@@ -18,4 +40,58 @@ unit-tests:
   stage: unit-test
   image: golang:1.19.1
   script:
-    - make unit-test
+    - make unit-test coverage cobertura
+    - mkdir -p public/unit
+    - mv backend/out/unit/* public/unit
+  artifacts:
+    reports:
+        cobertura: public/unit/coverage.xml
+    paths:
+      - public
+    expire_in: 1 hour
+
+build:
+  stage: build
+  image: golang:1.19.1
+  script:
+    - make build
+    - mkdir -p build/backend
+    - mv backend/out/*.out build/backend
+  artifacts:
+    paths:
+      - build/backend
+    expire_in: 1 hour
+
+integration-test:
+  stage: integration-test
+  services:
+    - name: alitrack/postgres-plpython
+      alias: postgres_db
+  variables:
+    POSTGRES_HOST: postgres_db
+    POSTGRES_DB: $POSTGRES_DB
+    POSTGRES_USER: $POSTGRES_USER
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    POSTGRES_HOST_AUTH_METHOD: trust
+  image: python:3.11
+  allow_failure: true
+  before_script:
+    - apt update && apt install -y postgresql-client-13
+  script:
+    - make bootstrap-ci integration-test
+    - mkdir -p public/integration/results
+    - mv backend/.allure_results/* public/integration/results
+  artifacts:
+    paths:
+      - public/integration/results
+    expire_in: 1 hour
+
+integration-tests-report:
+  stage: report
+  image: frankescobar/allure-docker-service
+  script:
+    - allure generate -c public/integration/results -o report
+  artifacts:
+    paths:
+      - report
+    expire_in: 1 hour

@@ -62,7 +62,7 @@ func (i *CacheInteractor) Get(space string, key []any) ([]any, error) {
 		return nil, fmt.Errorf("no record found")
 	}
 
-		if err != nil {
+	if err != nil {
 		return nil, err
 	}
 

@@ -9,7 +9,7 @@ import (
 
 type Handler struct {
 	adminHandler func(c *gin.Context)
-	userHandler func(c *gin.Context)
+	userHandler  func(c *gin.Context)
 }
 
 func New(admin, user func(c *gin.Context)) Handler {

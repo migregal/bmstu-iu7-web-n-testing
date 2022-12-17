@@ -12,7 +12,7 @@ import (
 )
 
 type getRequest struct {
-	ModelID   string `uri:"model_id" binding:"required"`
+	ModelID string `uri:"model_id" binding:"required"`
 }
 
 // Registration  godoc

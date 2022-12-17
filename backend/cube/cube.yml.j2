@@ -1,0 +1,44 @@
+debug: {{ cube.debug | d(false) }}
+
+db:
+  adapter: "expl"
+  driver: "pg"
+  host: "{{ (cube.db and cube.db.host) | d("localhost") }}"
+  port: {{ cube.db.port | d(5432) }}
+  db_name: "{{ cube.db.name | env_override('POSTGRES_DB') }}"
+  user: "{{ cube.db.user.name | env_override('REGULAR_USERNAME')}}"
+  password: "{{ cube.db.user.password | env_override('REGULAR_PASSWORD')}}"
+
+statdb:
+  adapter: "expl"
+  driver: "pg"
+  host: "{{ (cube.db and cube.db.host) | d("localhost") }}"
+  port: {{ (cube.db and cube.db.port) | d(5432) }}
+  db_name: "{{ cube.db.name | env_override('POSTGRES_DB') }}"
+  user: "{{ cube.db.stat.name | env_override('STAT_USERNAME')}}"
+  password: "{{ cube.db.stat.password | env_override('STAT_PASSWORD')}}"
+
+admindb:
+  adapter: "expl"
+  driver: "pg"
+  host: "{{ (cube.db and cube.db.host) | d("localhost") }}"
+  port: {{ (cube.db and cube.db.port) | d(5432) }}
+  db_name: "{{ cube.db.name | env_override('POSTGRES_DB') }}"
+  user: "{{ cube.db.admin.name | env_override('ADMIN_USERNAME')}}"
+  password: "{{ cube.db.admin.password | env_override('ADMIN_PASSWORD')}}"
+
+cache:
+  adapter: "{{ cube.cache.adapter | d("trnt") }}"
+  host: "{{ cube.cache.host | d("localhost") }}"
+  port: {{ cube.cache.port | d(3301) }}
+  user: "{{ cube.cache.user.name | env_override('CACHE_USERNAME') }}"
+  password: "{{ cube.cache.user.password | env_override('CACHE_PASSWORD') }}"
+
+validation:
+  min_username_len: 8
+  max_username_len: 32
+  min_pwd_len: 8
+  max_pwd_len: 64
+
+priv_key_path: "{{ "/tmp/crypto/pkcs8.key" | env_override('PRIVATE_KEY')}}"
+pub_key_path: "{{ "/tmp/crypto/publickey.crt" | env_override('PUBLIC_KEY') }}"

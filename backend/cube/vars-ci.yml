@@ -1,0 +1,12 @@
+debug: true
+
+cube:
+  db:
+    host: "postgres_db"
+    port: 5432
+    name: "neural_storage"
+    user: null
+    stat: null
+    admin: null
+  cache:
+    user: null

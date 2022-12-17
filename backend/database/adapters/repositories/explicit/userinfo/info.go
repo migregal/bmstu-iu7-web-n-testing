@@ -60,7 +60,7 @@ func (r *Repository) Find(filter repositories.UserInfoFilter) ([]user.Info, int6
 		query = query.Where("email in ?", filter.Emails)
 	}
 	if filter.Offset > 0 {
-		query = query.Offset(filter.Offset*filter.Limit)
+		query = query.Offset(filter.Offset * filter.Limit)
 	}
 	if filter.Limit > 0 {
 		query = query.Limit(filter.Limit)

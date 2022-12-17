@@ -7,20 +7,12 @@ import (
 )
 
 var (
-	statCallGet stat.Counter
-	statFailGet stat.Counter
-	statOKGet   stat.Counter
-
 	statCallDelete stat.Counter
 	statFailDelete stat.Counter
 	statOKDelete   stat.Counter
 )
 
 func init() {
-	statCallGet = stat.NewCounter("v1", "cube_admin_weights_call_read", "The total number of getting admin weights attempts")
-	statFailGet = stat.NewCounter("v1", "cube_admin_weights_fail_read", "The total number of getting admin weights fails")
-	statOKGet = stat.NewCounter("v1", "cube_admin_weights_ok_read", "The total number of getting admin weights")
-
 	statCallDelete = stat.NewCounter("v1", "cube_admin_weights_call_delete", "The total number of deleting admin weights attempts")
 	statFailDelete = stat.NewCounter("v1", "cube_admin_weights_fail_delete", "The total number of deleting admin weights fails attempts")
 	statOKDelete = stat.NewCounter("v1", "cube_admin_weights_ok_delete", "The total number of deleted admin weights")
