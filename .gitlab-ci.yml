@@ -15,9 +15,6 @@ bootstrap-frontend:
       - frontend/node_modules/
   script:
     - make bootstrap-frontend
-  only:
-    changes:
-      - frontend/package-lock.json
 
 lint-backend:
   stage: lint
